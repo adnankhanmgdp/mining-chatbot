@@ -11,18 +11,16 @@ if __name__ == "__main__":
     messages = []
     model_name = "models/embedding-001"
     embed_model = GeminiEmbedding(
-        model_name=model_name, api_key=api_key, title="this is a document"
+        model_name=model_name, api_key=api_key, 
     )
     Settings.embed_model = embed_model
     Settings.llm = llm
     documents = SimpleDirectoryReader("data").load_data()
     index = VectorStoreIndex.from_documents(documents)
-    query_engine = index.as_query_engine()
+    chat_engine = index.as_chat_engine()
     while True:
         query = input("Ask something: ")
-        response = query_engine.query(query)
+        response = chat_engine.chat(message=query, chat_history=messages)
         print(response)
-        # messages.append(ChatMessage(role="user", content=query))
-        # resp = llm.chat(messages)
-        # messages.append(ChatMessage(role='assistant', content=resp))
-        # print(resp)
+        messages.append(ChatMessage(role="user", content=query))
+        messages.append(ChatMessage(role='assistant', content=response))
